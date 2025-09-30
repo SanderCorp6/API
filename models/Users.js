@@ -1,0 +1,36 @@
+const pool = require("../db");
+const bcrypt = require("bcrypt");
+
+class User {
+    // return all users
+    static async getAll() {
+        const result = await pool.query("SELECT id, name, role, email, password FROM Users");
+        return result.rows;
+    }
+
+    // create user
+    static async create(name, role, email, password) {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const result = await pool.query(
+            "INSERT INTO Users (name, role, email, password) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role",
+            [name, role, email, hashedPassword]
+        );
+
+        return result.rows[0];
+    }
+
+    // find user by email
+    static async findByEmail(email) {
+        const result = await pool.query("SELECT * FROM Users WHERE email = $1", [email]);
+        return result.rows[0];
+    }
+
+    static async delete(email) {
+        const result = await pool.query("DELETE FROM Users WHERE email = $1", [email]);
+        return result.rows;
+    }
+}
+
+module.exports = User;
