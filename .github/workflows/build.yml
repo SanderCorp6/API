@@ -1,0 +1,39 @@
+name: Test, Build & Deploy API
+
+on:
+    push:
+        branches:
+            - main
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Checkout
+        uses: actions/checkout@v5
+
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.REPO_NAME }}:latest .
+
+      - name: Use hash of commit
+        run: docker tag ${{ secrets.REPO_NAME }}:latest ${{ secrets.REPO_NAME }}:${{ github.sha }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.0.0
+        with:
+          audience: sts.amazonaws.com
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push Docker image to AWS
+        run: |
+          docker push ${{ secrets.REPO_NAME }}:latest
+          docker push ${{ secrets.REPO_NAME }}:${{ github.sha }}
