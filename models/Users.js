@@ -9,15 +9,11 @@ class User {
     }
 
     // create user
-    static async create(name, role, email, password) {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+    static async create(name, role, email, hashedPassword) {
         const result = await pool.query(
             "INSERT INTO Users (name, role, email, password) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role",
             [name, role, email, hashedPassword]
         );
-
         return result.rows[0];
     }
 
@@ -27,9 +23,10 @@ class User {
         return result.rows[0];
     }
 
+    // delete user
     static async delete(email) {
         const result = await pool.query("DELETE FROM Users WHERE email = $1", [email]);
-        return result.rows;
+        return result.rowCount > 0;
     }
 }
 
