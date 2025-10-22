@@ -37,3 +37,18 @@ jobs:
         run: |
           docker push ${{ secrets.REPO_NAME }}:latest
           docker push ${{ secrets.REPO_NAME }}:${{ github.sha }}
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to AWS EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/containers
+            docker pull ${{ secrets.REPO_NAME }}:latest
+            docker compose up -d
