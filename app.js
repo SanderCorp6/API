@@ -11,7 +11,7 @@ app.use(cors());
 app.use("/auth", authRouter);
 
 app.get('/', (req, res) => {
-    res.send('It works!');
+    res.send('Welcome to RRHH API');
 })
 
 const PORT = process.env.PORT;
