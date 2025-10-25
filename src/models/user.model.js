@@ -1,10 +1,9 @@
-const pool = require("../db");
-const bcrypt = require("bcrypt");
+const pool = require("../config/db.config");
 
 class User {
     // return all users
     static async getAll() {
-        const result = await pool.query("SELECT id, name, role, email, password FROM Users");
+        const result = await pool.query("SELECT id, name, role, email FROM Users");
         return result.rows;
     }
 
