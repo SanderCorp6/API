@@ -1,7 +1,7 @@
-const pool = require("../config/db.config"); // Asegúrate que la ruta es correcta
+const pool = require("../config/db.config");
 
 class Employee {
-    // Return all employees, with dynamic filtering
+    // get employees, with dynamic filtering
     static async getAll(filters = {}) {
         let baseQuery = `
             SELECT
@@ -36,8 +36,22 @@ class Employee {
             baseQuery += " WHERE " + whereClauses.join(" AND ");
         }
 
-        // baseQuery += " ORDER BY e.first_name, e.last_name";
-        baseQuery += " ORDER BY e.status";
+        const sortableColumns = {
+            name: 'name',
+            department: 'd.name',
+            position: 'e.position',
+            status: 'e.status',
+            date: 'e.hire_date'
+        };
+
+        const sortBy = sortableColumns[filters.sortBy] ? filters.sortBy : 'name'; 
+        const sortDir = (filters.sortDir && filters.sortDir.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
+
+        if (sortBy === 'name') {
+            baseQuery += ` ORDER BY e.first_name ${sortDir}, e.last_name ${sortDir}`;
+        } else {
+            baseQuery += ` ORDER BY ${sortableColumns[sortBy]} ${sortDir}`;
+        }
 
         const result = await pool.query(baseQuery, params);
         return result.rows;
@@ -109,6 +123,39 @@ class Employee {
     static async delete(id) {
         const result = await pool.query("DELETE FROM employees WHERE id = $1", [id]);
         return result.rowCount > 0;
+    }
+
+    // stats employees
+    static async getStats() {
+        const employeeStatsQuery = `
+            SELECT
+                COUNT(*) AS "totalEmployees",
+                SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS "activeEmployees",
+                SUM(CASE WHEN status = 'Inactive' THEN 1 ELSE 0 END) AS "inactiveEmployees"
+            FROM
+                employees
+        `;
+        
+        const departmentStatsQuery = `SELECT COUNT(*) AS "totalDepartments" FROM departments`;
+
+        try {
+            const [employeeResult, departmentResult] = await Promise.all([
+                pool.query(employeeStatsQuery),
+                pool.query(departmentStatsQuery)
+            ]);
+
+            const employeeStats = employeeResult.rows[0];
+            const departmentStats = departmentResult.rows[0];
+
+            return {
+                ...employeeStats,
+                ...departmentStats
+            };
+
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+            throw new AppError("Could not fetch dashboard stats.", 500);
+        }
     }
 }
 

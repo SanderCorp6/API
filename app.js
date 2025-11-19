@@ -19,9 +19,9 @@ app.get("/", (req, res) => {
     res.send("Welcome to RRHH API");
 })
 
-// app.all("*", (req, res, next) => {
-//     next(new AppError(`Cannot find ${req.originalUrl} in this server.`, 404));
-// })
+app.use((req, res, next) => {
+    next(new AppError(`Cannot find ${req.originalUrl} in this server.`, 404));
+});
 app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || 3000;

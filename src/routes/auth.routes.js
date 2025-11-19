@@ -6,6 +6,6 @@ const { handleAsync } = require("../middleware/error.middleware");
 
 router.post("/login", handleAsync(authController.login));
 router.post("/signup", handleAsync(authController.signup));
-router.get("/users", authenticateToken, handleAsync(authController.getAllUsers));
+router.get("/users", handleAsync(authController.getAllUsers));
 
 module.exports = router;
