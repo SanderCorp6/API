@@ -12,6 +12,9 @@ router.get("/", handleAsync(employeeController.getEmployees));
 // POST /employees/
 router.post("/", handleAsync(employeeController.createEmployee));
 
+// GET /employees/stats
+router.get("/stats", handleAsync(employeeController.getEmployeeStats));
+
 // GET /employees/:id
 router.get("/:id", handleAsync(employeeController.getEmployeeById));
 
@@ -20,5 +23,6 @@ router.patch("/:id", handleAsync(employeeController.updateEmployee));
 
 // DELETE /employees/:id
 router.delete("/:id", handleAsync(employeeController.deleteEmployee));
+
 
 module.exports = router;

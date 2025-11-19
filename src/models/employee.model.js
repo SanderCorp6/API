@@ -1,7 +1,7 @@
-const pool = require("../config/db.config"); // Asegúrate que la ruta es correcta
+const pool = require("../config/db.config");
 
 class Employee {
-    // Return all employees, with dynamic filtering
+    // get employees, with dynamic filtering
     static async getAll(filters = {}) {
         let baseQuery = `
             SELECT
@@ -109,6 +109,39 @@ class Employee {
     static async delete(id) {
         const result = await pool.query("DELETE FROM employees WHERE id = $1", [id]);
         return result.rowCount > 0;
+    }
+
+    // stats employees
+    static async getStats() {
+        const employeeStatsQuery = `
+            SELECT
+                COUNT(*) AS "totalEmployees",
+                SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS "activeEmployees",
+                SUM(CASE WHEN status = 'Inactive' THEN 1 ELSE 0 END) AS "inactiveEmployees"
+            FROM
+                employees
+        `;
+        
+        const departmentStatsQuery = `SELECT COUNT(*) AS "totalDepartments" FROM departments`;
+
+        try {
+            const [employeeResult, departmentResult] = await Promise.all([
+                pool.query(employeeStatsQuery),
+                pool.query(departmentStatsQuery)
+            ]);
+
+            const employeeStats = employeeResult.rows[0];
+            const departmentStats = departmentResult.rows[0];
+
+            return {
+                ...employeeStats,
+                ...departmentStats
+            };
+
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+            throw new AppError("Could not fetch dashboard stats.", 500);
+        }
     }
 }
 

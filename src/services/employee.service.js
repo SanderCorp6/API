@@ -74,6 +74,11 @@ class EmployeeService {
             throw new AppError("Employee not found.", 404);
         }
     }
+
+    static async getStats() {
+        const stats = await Employee.getStats();
+        return stats;
+    }
 }
 
 module.exports = EmployeeService;
