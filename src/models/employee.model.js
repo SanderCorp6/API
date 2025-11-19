@@ -36,8 +36,22 @@ class Employee {
             baseQuery += " WHERE " + whereClauses.join(" AND ");
         }
 
-        // baseQuery += " ORDER BY e.first_name, e.last_name";
-        baseQuery += " ORDER BY e.status";
+        const sortableColumns = {
+            name: 'name',
+            department: 'd.name',
+            position: 'e.position',
+            status: 'e.status',
+            date: 'e.hire_date'
+        };
+
+        const sortBy = sortableColumns[filters.sortBy] ? filters.sortBy : 'name'; 
+        const sortDir = (filters.sortDir && filters.sortDir.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
+
+        if (sortBy === 'name') {
+            baseQuery += ` ORDER BY e.first_name ${sortDir}, e.last_name ${sortDir}`;
+        } else {
+            baseQuery += ` ORDER BY ${sortableColumns[sortBy]} ${sortDir}`;
+        }
 
         const result = await pool.query(baseQuery, params);
         return result.rows;
