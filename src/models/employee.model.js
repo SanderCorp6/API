@@ -61,15 +61,21 @@ class Employee {
     static async create(e) {
         const query = `
             INSERT INTO employees
-            (first_name, last_name, email, phone_number, address, birth_date, hire_date, termination_date, contract_type, position, department_id, supervisor_id, status, reentry_date, created_by, updated_by)
+            (first_name, last_name, email, phone_number, address, birth_date, hire_date, 
+            termination_date, contract_type, position, department_id, supervisor_id, status, 
+            salary, payroll_key, periodicity, cost_center, vacation_days_total,
+            reentry_date, created_by, updated_by)
             VALUES
-            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 
+             $14, $15, $16, $17, $18, 
+             $19, $20, $21)
             RETURNING id, first_name, last_name, email, status
         `;
         const params = [
             e.first_name, e.last_name, e.email, e.phone_number, e.address,
             e.birth_date, e.hire_date, e.termination_date, e.contract_type,
             e.position, e.department_id, e.supervisor_id, e.status,
+            e.salary, e.payroll_key, e.periodicity, e.cost_center, e.vacation_days_total,
             e.reentry_date, e.created_by, e.updated_by
         ];
         const result = await pool.query(query, params);
@@ -104,8 +110,10 @@ class Employee {
                 first_name = $1, last_name = $2, email = $3, phone_number = $4, address = $5,
                 birth_date = $6, hire_date = $7, termination_date = $8, contract_type = $9,
                 position = $10, department_id = $11, supervisor_id = $12, status = $13,
-                reentry_date = $14, updated_by = $15
-            WHERE id = $16
+                salary = $14, payroll_key = $15, periodicity = $16, cost_center = $17, 
+                vacation_days_total = $18, vacation_days_taken = $19,
+                reentry_date = $20, updated_by = $21
+            WHERE id = $22
             RETURNING *
         `;
 
@@ -113,6 +121,8 @@ class Employee {
             e.first_name, e.last_name, e.email, e.phone_number, e.address,
             e.birth_date, e.hire_date, e.termination_date, e.contract_type,
             e.position, e.department_id, e.supervisor_id, e.status,
+            e.salary, e.payroll_key, e.periodicity, e.cost_center,
+            e.vacation_days_total, e.vacation_days_taken,
             e.reentry_date, e.updated_by, id
         ];
         const result = await pool.query(query, params);
