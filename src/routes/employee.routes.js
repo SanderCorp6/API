@@ -9,14 +9,20 @@ router.use(authenticateToken);
 // GET /employees/ (filtros: ?status=Active&search=Sam)
 router.get("/", handleAsync(employeeController.getEmployees));
 
-// POST /employees/
-router.post("/", handleAsync(employeeController.createEmployee));
-
 // GET /employees/stats
 router.get("/stats", handleAsync(employeeController.getEmployeeStats));
 
+// GET /employees/history/:id
+router.get("/history/:id", handleAsync(employeeController.getEmployeeHistory));
+
 // GET /employees/:id
 router.get("/:id", handleAsync(employeeController.getEmployeeById));
+
+// POST /employees/
+router.post("/", handleAsync(employeeController.createEmployee));
+
+// POST /employees/warnings/:id
+router.post("/warnings/:id", handleAsync(employeeController.addWarning));
 
 // PATCH /employees/:id
 router.patch("/:id", handleAsync(employeeController.updateEmployee));

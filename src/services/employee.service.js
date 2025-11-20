@@ -1,4 +1,3 @@
-const { use } = require("../config/email.config");
 const Employee = require("../models/employee.model");
 const EmployeeHistory = require("../models/history.model");
 const AppError = require("../utils/AppError");
