@@ -1,11 +1,13 @@
-const { use } = require("../config/email.config");
 const Employee = require("../models/employee.model");
+const EmployeeHistory = require("../models/history.model");
 const AppError = require("../utils/AppError");
 
 class EmployeeService {
     static async create(e, userId) {
         if (!e.first_name || !e.last_name || !e.email || !e.phone_number || !e.address ||
             !e.birth_date || !e.hire_date || !e.contract_type ||
+            !e.salary || !e.payroll_key || !e.periodicity || !e.cost_center ||
+            !e.vacation_days_total ||
             !e.position || !e.department_id || !e.supervisor_id){
             throw new AppError("Incomplete fields for user creation", 409);
         }
@@ -58,6 +60,28 @@ class EmployeeService {
             }
         }
 
+        if (dataToUpdate.position && dataToUpdate.position !== existingEmployee.position) {
+            await EmployeeHistory.create({
+                employee_id: id,
+                change_type: 'POSITION_CHANGE',
+                description: `Change of position from ${existingEmployee.position} to ${dataToUpdate.position}`,
+                previous_value: existingEmployee.position,
+                new_value: dataToUpdate.position,
+                created_by: userId
+            });
+        }
+
+        if (dataToUpdate.salary && parseFloat(dataToUpdate.salary) !== parseFloat(existingEmployee.salary)) {
+            await EmployeeHistory.create({
+                employee_id: id,
+                change_type: 'SALARY_CHANGE',
+                description: `Salary adjustment from ${existingEmployee.salary} to ${dataToUpdate.salary}`,
+                previous_value: existingEmployee.salary.toString(),
+                new_value: dataToUpdate.salary.toString(),
+                created_by: userId
+            });
+        }
+
         const employeeData = {
             ...existingEmployee,
             ...dataToUpdate,
@@ -78,6 +102,24 @@ class EmployeeService {
     static async getStats() {
         const stats = await Employee.getStats();
         return stats;
+    }
+
+    static async addWarning(id, reason, userId) {
+        const employee = await Employee.getById(id);
+        if (!employee) throw new AppError("Employee not found", 404);
+
+        return await EmployeeHistory.create({
+            employee_id: id,
+            change_type: 'WARNING',
+            description: reason,
+            previous_value: null,
+            new_value: 'Recorded',
+            created_by: userId
+        });
+    }
+
+    static async getHistory(id) {
+        return await EmployeeHistory.getByEmployeeId(id);
     }
 }
 

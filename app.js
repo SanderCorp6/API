@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const authRouter = require("./src/routes/auth.routes");
 const employeeRouter = require("./src/routes/employee.routes")
+const vacationRouter = require("./src/routes/vacation.routes");
 const AppError = require("./src/utils/AppError")
 const { globalErrorHandler } = require("./src/middleware/error.middleware")
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/auth", authRouter);
 app.use("/employees", employeeRouter);
+app.use("/vacations", vacationRouter);
 
 app.get("/", (req, res) => {
     res.send("Welcome to RRHH API");

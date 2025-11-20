@@ -38,11 +38,27 @@ const getEmployeeStats = async (req, res, next) => {
     res.status(200).json({ totalEmployees, activeEmployees, inactiveEmployees, totalDepartments });
 };
 
+const addWarning = async (req, res, next) => {
+    const { id } = req.params;
+    const { reason } = req.body;
+    const userId = req.user.id;
+    const warning = await EmployeeService.addWarning(id, reason, userId);
+    res.status(201).json({ message: "Warning added!", warning });
+};
+
+const getEmployeeHistory = async (req, res, next) => {
+    const { id } = req.params;
+    const history = await EmployeeService.getHistory(id);
+    res.status(200).json({ history });
+};
+
 module.exports = {
     createEmployee,
     getEmployees,
     getEmployeeById,
     updateEmployee,
     deleteEmployee,
-    getEmployeeStats
+    getEmployeeStats,
+    addWarning,
+    getEmployeeHistory
 };
