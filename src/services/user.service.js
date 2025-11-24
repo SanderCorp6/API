@@ -58,8 +58,6 @@ class UserService {
 
     // generate a jwt token for users
     static generateToken(user) {
-
-        console.log("Generating token for user:", user);
         return jwt.sign(
             { 
                 id: user.id, 
