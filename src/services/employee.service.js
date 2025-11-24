@@ -82,6 +82,17 @@ class EmployeeService {
             });
         }
 
+        if (dataToUpdate.department_id && dataToUpdate.department_id !== existingEmployee.department_id) {
+            await EmployeeHistory.create({
+                employee_id: id,
+                change_type: 'DEPARTMENT_CHANGE',
+                description: `Change of department from ID ${existingEmployee.department_id} to ID ${dataToUpdate.department_id}`,
+                previous_value: existingEmployee.department_id.toString(),
+                new_value: dataToUpdate.department_id.toString(),
+                created_by: userId
+            });
+        }
+
         const employeeData = {
             ...existingEmployee,
             ...dataToUpdate,
@@ -119,6 +130,9 @@ class EmployeeService {
     }
 
     static async getHistory(id) {
+        const employee = await Employee.getById(id);
+        if (!employee) throw new AppError("Employee not found", 404);
+
         return await EmployeeHistory.getByEmployeeId(id);
     }
 }
