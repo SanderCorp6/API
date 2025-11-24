@@ -35,12 +35,12 @@ class VacationService {
         return await VacationRequest.getByEmployeeId(employeeId);
     }
 
-    static async updateStatus(requestId, status) {
+    static async updateStatus(requestId, status, userId) {
         if (!["Approved", "Rejected", "Pending"].includes(status)) {
             throw new AppError("Invalid status value.", 409);
         }
 
-        return await VacationRequest.updateStatus(requestId, status);
+        return await VacationRequest.updateStatus(requestId, status, userId);
     }
 }
 
