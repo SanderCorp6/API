@@ -1,4 +1,5 @@
 const pool = require("../config/db.config");
+const AppError = require("../utils/AppError");
 
 class Employee {
     // get employees, with dynamic filtering
@@ -131,8 +132,12 @@ class Employee {
 
     // delete employee
     static async delete(id) {
-        const result = await pool.query("DELETE FROM employees WHERE id = $1", [id]);
-        return result.rowCount > 0;
+        try {
+            const result = await pool.query("DELETE FROM employees WHERE id = $1", [id]);
+            return result.rowCount > 0;
+        } catch (error) {
+            throw new AppError("Cannot delete employee with existing dependencies.", 409);
+        }
     }
 
     // stats employees
@@ -163,7 +168,6 @@ class Employee {
             };
 
         } catch (error) {
-            console.error("Error fetching stats:", error);
             throw new AppError("Could not fetch dashboard stats.", 500);
         }
     }
