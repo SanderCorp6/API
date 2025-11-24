@@ -19,9 +19,9 @@ class VacationRequest {
         return result.rows;
     }
 
-    static async updateStatus(requestId, status) {
-        const query = `UPDATE vacation_requests SET status = $1 WHERE id = $2 RETURNING *`;
-        const result = await pool.query(query, [status, requestId]);
+    static async updateStatus(requestId, status, userId) {
+        const query = `UPDATE vacation_requests SET status = $1, reviewed_by = $2 WHERE id = $3 RETURNING *`;
+        const result = await pool.query(query, [status, userId, requestId]);
         return result.rows[0];
     }
     

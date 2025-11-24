@@ -17,8 +17,9 @@ const getEmployeeRequests = async (req, res, next) => {
 const updateRequestStatus = async (req, res, next) => {
     const { requestId } = req.params;
     const { status } = req.body;
+    const userId = req.user.id;
 
-    const updatedRequest = await VacationService.updateStatus(requestId, status);
+    const updatedRequest = await VacationService.updateStatus(requestId, status, userId);
     res.status(200).json({ message: "Vacation request updated!", updatedRequest });
 }
 
