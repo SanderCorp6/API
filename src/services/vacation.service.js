@@ -34,6 +34,14 @@ class VacationService {
     static async getEmployeeRequests(employeeId) {
         return await VacationRequest.getByEmployeeId(employeeId);
     }
+
+    static async updateStatus(requestId, status) {
+        if (!["Approved", "Rejected", "Pending"].includes(status)) {
+            throw new AppError("Invalid status value.", 409);
+        }
+
+        return await VacationRequest.updateStatus(requestId, status);
+    }
 }
 
 module.exports = VacationService;
