@@ -18,9 +18,7 @@ class EmployeeHistory {
 
     static async getByEmployeeId(employeeId) {
         const query = `
-            SELECT h.*, u.name as changer_name 
-            FROM employee_history h
-            LEFT JOIN users u ON h.created_by = u.id
+            SELECT * FROM employee_history
             WHERE employee_id = $1 
             ORDER BY created_at DESC
         `;
