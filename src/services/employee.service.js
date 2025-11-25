@@ -1,9 +1,10 @@
+const sendWelcomeEmail = require("../services/email.service");
 const Employee = require("../models/employee.model");
 const EmployeeHistory = require("../models/history.model");
 const AppError = require("../utils/AppError");
 
-class EmployeeService {
-    static async create(e, userId) {
+class EmployeeService {    
+    static async create(e) {
         if (!e.first_name || !e.last_name || !e.email || !e.phone_number || !e.address ||
             !e.birth_date || !e.hire_date || !e.contract_type ||
             !e.salary || !e.payroll_key || !e.periodicity || !e.cost_center ||
@@ -17,10 +18,10 @@ class EmployeeService {
             throw new AppError("There is already an employee registered with that email.", 409);
         }
 
-        e.created_by = userId;
         e.status = "Active";
 
         const newEmployee = await Employee.create(e);
+        sendWelcomeEmail(e.email);
         return newEmployee;
     }
 
