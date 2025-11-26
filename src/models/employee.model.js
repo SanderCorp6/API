@@ -31,9 +31,11 @@ class Employee {
             whereClauses.push(`e.department_id = $${params.length}`);
         }
         if (filters.search) {
-            params.push(`%${filters.search}%`);
+            const searchTerm = filters.search.trim();
+
+            params.push(`%${searchTerm}%`);
             whereClauses.push(
-                `(e.first_name ILIKE $${params.length} OR e.last_name ILIKE $${params.length} OR e.email ILIKE $${params.length})`
+                `((e.first_name || ' ' || e.last_name) ILIKE $${params.length} OR e.email ILIKE $${params.length})`
             );
         }
 
