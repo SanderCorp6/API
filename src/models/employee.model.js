@@ -48,7 +48,8 @@ class Employee {
             department: 'd.name',
             position: 'e.position',
             status: 'e.status',
-            date: 'e.hire_date'
+            date: 'e.hire_date',
+            salary: 'e.salary'
         };
 
         const sortBy = sortableColumns[filters.sortBy] ? filters.sortBy : 'name'; 
