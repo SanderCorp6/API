@@ -3,3 +3,4 @@
 .github
 .gitignore
 node_modules
+.eslintcache

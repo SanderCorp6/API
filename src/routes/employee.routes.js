@@ -30,5 +30,4 @@ router.patch("/:id", handleAsync(employeeController.updateEmployee));
 // DELETE /employees/:id
 router.delete("/:id", handleAsync(employeeController.deleteEmployee));
 
-
 module.exports = router;

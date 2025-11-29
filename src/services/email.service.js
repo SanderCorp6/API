@@ -1,11 +1,12 @@
 const transporter = require("../config/email.config");
+const AppError = require("../utils/AppError");
 
 // Send Email function for Sign Up
-async function sendWelcomeEmail (to) {
-    const mailOptions = {
-        to,
-        subject: 'Welcome to Sander RRHH!',
-        html: `
+async function sendWelcomeEmail(to) {
+  const mailOptions = {
+    to,
+    subject: "Welcome to Sander RRHH!",
+    html: `
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -46,15 +47,14 @@ async function sendWelcomeEmail (to) {
                 </table>
             </body>
             </html>
-        `
-    }
+        `,
+  };
 
-    try {
-        await transporter.sendMail(mailOptions);
-    } catch (error) {
-        console.error("Error while sending email:", error)
-    }
-        
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch {
+    AppError("Error while sending email:", 500);
+  }
 }
 
 module.exports = sendWelcomeEmail;
