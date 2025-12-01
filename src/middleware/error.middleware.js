@@ -12,6 +12,7 @@ const globalErrorHandler = (err, req, res, _next) => {
 
   // server error
   if (!err.isOperational) {
+    console.log(err);
     return res.status(500).json({
       status: "error",
       message: "Server side error.",

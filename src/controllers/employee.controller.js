@@ -6,6 +6,11 @@ const getEmployees = async (req, res) => {
   res.status(200).json({ employees });
 };
 
+const getEmployeeOptions = async (req, res) => {
+  const employees = await EmployeeService.getSimpleAll();
+  res.status(200).json({ employees });
+};
+
 const getEmployeeById = async (req, res) => {
   const { id } = req.params;
   const e = await EmployeeService.getById(id);
@@ -65,6 +70,7 @@ const addWarning = async (req, res) => {
 module.exports = {
   createEmployee,
   getEmployees,
+  getEmployeeOptions,
   getEmployeeById,
   updateEmployee,
   deleteEmployee,
