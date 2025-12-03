@@ -3,7 +3,7 @@ const Employee = require("../models/employee.model");
 const AppError = require("../utils/AppError");
 
 class VacationService {
-  static async requestVacation(employeeId, startDate, endDate, reason) {
+  static async requestVacation(employeeId, startDate, endDate, type, description) {
     const employee = await Employee.getById(employeeId);
     if (!employee) {
       throw new AppError("Employee not found", 404);
@@ -29,7 +29,8 @@ class VacationService {
       start_date: startDate,
       end_date: endDate,
       days_requested: daysRequested,
-      reason,
+      type,
+      description,
     });
   }
 
