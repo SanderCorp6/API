@@ -2,9 +2,9 @@ const VacationService = require("../services/vacation.service");
 
 const requestVacation = async (req, res) => {
   const { employeeId } = req.params;
-  const { startDate, endDate, reason } = req.body;
+  const { startDate, endDate, type, description } = req.body;
 
-  const vacationRequest = await VacationService.requestVacation(employeeId, startDate, endDate, reason);
+  const vacationRequest = await VacationService.requestVacation(employeeId, startDate, endDate, type, description);
   res.status(201).json({ message: "Vacation request created!", vacationRequest });
 };
 
