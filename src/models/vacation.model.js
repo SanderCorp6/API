@@ -4,11 +4,11 @@ class VacationRequest {
   static async create(data) {
     const query = `
             INSERT INTO vacation_requests
-            (employee_id, start_date, end_date, days_requested, reason, status)
-            VALUES ($1, $2, $3, $4, $5, 'Pending')
+            (employee_id, start_date, end_date, days_requested, type, description, status)
+            VALUES ($1, $2, $3, $4, $5, $6, 'Pending')
             RETURNING *
         `;
-    const params = [data.employee_id, data.start_date, data.end_date, data.days_requested, data.reason];
+    const params = [data.employee_id, data.start_date, data.end_date, data.days_requested, data.type, data.description];
     const result = await pool.query(query, params);
     return result.rows[0];
   }
