@@ -9,6 +9,9 @@ router.use(authenticateToken);
 // GET /employees/ (filtros: ?status=Active&search=Sam)
 router.get("/", handleAsync(employeeController.getEmployees));
 
+// GET /employees/options
+router.get("/options", handleAsync(employeeController.getEmployeeOptions));
+
 // GET /employees/stats
 router.get("/stats", handleAsync(employeeController.getEmployeeStats));
 
@@ -29,6 +32,5 @@ router.patch("/:id", handleAsync(employeeController.updateEmployee));
 
 // DELETE /employees/:id
 router.delete("/:id", handleAsync(employeeController.deleteEmployee));
-
 
 module.exports = router;

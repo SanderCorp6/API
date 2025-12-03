@@ -6,6 +6,7 @@ const authRouter = require("./src/routes/auth.routes");
 const employeeRouter = require("./src/routes/employee.routes");
 const vacationRouter = require("./src/routes/vacation.routes");
 const departmentRouter = require("./src/routes/department.routes");
+const positionRouter = require("./src/routes/position.routes");
 const AppError = require("./src/utils/AppError");
 const { globalErrorHandler } = require("./src/middleware/error.middleware");
 
@@ -18,17 +19,18 @@ app.use("/auth", authRouter);
 app.use("/employees", employeeRouter);
 app.use("/vacations", vacationRouter);
 app.use("/departments", departmentRouter);
+app.use("/positions", positionRouter);
 
 app.get("/", (req, res) => {
-    res.send("Welcome to RRHH API");
-})
+  res.send("Welcome to RRHH API");
+});
 
 app.use((req, res, next) => {
-    next(new AppError(`Cannot find ${req.originalUrl} in this server.`, 404));
+  next(new AppError(`Cannot find ${req.originalUrl} in this server.`, 404));
 });
 app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running -> http://localhost:${PORT}`);
+  console.log(`Server running -> http://localhost:${PORT}`);
 });
