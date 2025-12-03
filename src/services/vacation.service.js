@@ -5,7 +5,7 @@ const AppError = require("../utils/AppError");
 class VacationService {
   static async requestVacation(employeeId, startDate, endDate, type, description) {
     if (!employeeId || !startDate || !endDate || !type || !description) {
-      throw new AppError("All fields are required (startDate, endDate, type, description)", 400);
+      throw new AppError("All fields are required", 400);
     }
 
     const employee = await Employee.getById(employeeId);
