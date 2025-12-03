@@ -61,7 +61,6 @@ class EmployeeService {
       !e.department_id ||
       !e.supervisor_id ||
       !e.salary ||
-      !e.payroll_key ||
       !e.periodicity ||
       !e.cost_center ||
       !e.vacation_days_total
@@ -74,6 +73,15 @@ class EmployeeService {
       throw new AppError("There is already an employee registered with that email.", 409);
     }
 
+    const department = await Department.getById(e.department_id);
+    if (!department) {
+      throw new AppError("Invalid Department ID provided.", 404);
+    }
+
+    const deptPrefix = department.name.substring(0, 3).toUpperCase();
+    const randomNumbers = Math.floor(100 + Math.random() * 900);
+
+    e.payroll_key = `${deptPrefix}-0${randomNumbers}`;
     e.status = "Active";
 
     const newEmployee = await Employee.create(e);
