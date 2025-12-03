@@ -14,6 +14,11 @@ const getEmployeeRequests = async (req, res) => {
   res.status(200).json({ vacationRequests });
 };
 
+const getAllRequests = async (req, res) => {
+  const vacationRequests = await VacationService.getAllRequests();
+  res.status(200).json({ vacationRequests });
+};
+
 const updateRequestStatus = async (req, res) => {
   const { requestId } = req.params;
   const { status } = req.body;
@@ -26,5 +31,6 @@ const updateRequestStatus = async (req, res) => {
 module.exports = {
   requestVacation,
   getEmployeeRequests,
+  getAllRequests,
   updateRequestStatus,
 };

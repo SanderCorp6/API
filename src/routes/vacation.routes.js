@@ -5,6 +5,9 @@ const { handleAsync } = require("../middleware/error.middleware");
 
 router.use(authenticateToken);
 
+// GET /vacations
+router.get("/", handleAsync(vacationController.getAllRequests));
+
 // POST /vacations/:employeeId
 router.post("/:employeeId", handleAsync(vacationController.requestVacation));
 
