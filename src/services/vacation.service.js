@@ -15,6 +15,10 @@ class VacationService {
 
     const start = new Date(startDate);
     const end = new Date(endDate);
+    if (end <= start) {
+      throw new AppError("End date must be after start date.", 400);
+    }
+
     const diffTime = Math.abs(end - start);
     const daysRequested = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
