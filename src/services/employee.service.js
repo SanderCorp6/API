@@ -87,7 +87,6 @@ class EmployeeService {
       expiresIn: "1d",
     });
     const activationLink = `${FRONTEND_URL}/activate?token=${activationToken}&email=${newEmployee.email}&name=${newEmployee.full_name}`;
-    console.log(activationLink);
     sendWelcomeEmail(e.email, activationLink);
 
     return newEmployee;

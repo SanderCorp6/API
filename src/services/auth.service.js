@@ -35,7 +35,10 @@ class AuthService {
     return {
       id: employee.id,
       name: employee.full_name,
+      first_name: employee.first_name,
+      last_name: employee.last_name,
       email: employee.email,
+      phone_number: employee.phone_number,
       role: employee.role,
       token: jwt.sign(
         {
