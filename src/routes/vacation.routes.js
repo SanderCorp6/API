@@ -8,13 +8,16 @@ router.use(authenticateToken);
 // GET /vacations
 router.get("/", handleAsync(vacationController.getAllRequests));
 
+// GET /vacations/employee/:employeeId
+router.get("/employee/:employeeId", handleAsync(vacationController.getEmployeeRequests));
+
+// GET /vacations/:id
+router.get("/:id", handleAsync(vacationController.getRequestById));
+
 // POST /vacations/:employeeId
 router.post("/:employeeId", handleAsync(vacationController.requestVacation));
 
-// GET /vacations/:employeeId
-router.get("/:employeeId", handleAsync(vacationController.getEmployeeRequests));
-
-// PATCH /vacations/:requestId
-router.patch("/:requestId", handleAsync(vacationController.updateRequestStatus));
+// PATCH /vacations/:id
+router.patch("/:id", handleAsync(vacationController.updateRequestStatus));
 
 module.exports = router;

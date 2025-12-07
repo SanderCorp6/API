@@ -6,7 +6,7 @@ const { handleAsync } = require("../middleware/error.middleware");
 
 router.use(authenticateToken);
 const multer = require("multer");
-const storage = multer.memoryStorage(); // Almacenamiento en memoria para pasar luego a S3
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // GET /employees/ (filtros: ?status=Active&search=Sam)

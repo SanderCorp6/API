@@ -15,17 +15,24 @@ const getEmployeeRequests = async (req, res) => {
   res.status(HTTP_STATUS.OK).json({ vacationRequests });
 };
 
+const getRequestById = async (req, res) => {
+  const { id } = req.params;
+  const vacationRequest = await VacationService.getById(id);
+  res.status(HTTP_STATUS.OK).json({ vacationRequest });
+};
+
 const getAllRequests = async (req, res) => {
-  const vacationRequests = await VacationService.getAllRequests();
+  const { status } = req.query;
+  const vacationRequests = await VacationService.getAllRequests({ status });
   res.status(HTTP_STATUS.OK).json({ vacationRequests });
 };
 
 const updateRequestStatus = async (req, res) => {
-  const { requestId } = req.params;
+  const { id } = req.params;
   const { status } = req.body;
   const userId = req.user.id;
 
-  const updatedRequest = await VacationService.updateStatus(requestId, status, userId);
+  const updatedRequest = await VacationService.updateStatus(id, status, userId);
   res.status(HTTP_STATUS.OK).json({ message: "Vacation request updated!", updatedRequest });
 };
 
@@ -33,5 +40,6 @@ module.exports = {
   requestVacation,
   getEmployeeRequests,
   getAllRequests,
+  getRequestById,
   updateRequestStatus,
 };
