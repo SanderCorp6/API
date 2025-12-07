@@ -113,7 +113,7 @@ class Employee {
   // get by email
   static async getByEmail(email) {
     const query = `
-      SELECT id, full_name, first_name, last_name, email, phone_number,role, password, is_first_login, status 
+      SELECT id, full_name, email, password, is_first_login, status 
       FROM employees WHERE email = $1
     `;
     const result = await pool.query(query, [email]);
@@ -197,8 +197,8 @@ class Employee {
           position_id = $10, department_id = $11, supervisor_id = $12, status = $13,
           salary = $14, payroll_key = $15, periodicity = $16, cost_center = $17, 
           vacation_days_total = $18, vacation_days_taken = $19,
-          reentry_date = $20, role = $21
-      WHERE id = $22
+          reentry_date = $20, role = $21, image_url = $22
+      WHERE id = $23
       RETURNING *
     `;
 
@@ -224,6 +224,7 @@ class Employee {
       e.vacation_days_taken,
       e.reentry_date,
       e.role,
+      e.image_url,
       id,
     ];
     const result = await pool.query(query, params);

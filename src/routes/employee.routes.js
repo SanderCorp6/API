@@ -5,6 +5,9 @@ const authenticateToken = require("../middleware/auth.middleware");
 const { handleAsync } = require("../middleware/error.middleware");
 
 router.use(authenticateToken);
+const multer = require("multer");
+const storage = multer.memoryStorage(); // Almacenamiento en memoria para pasar luego a S3
+const upload = multer({ storage: storage });
 
 // GET /employees/ (filtros: ?status=Active&search=Sam)
 router.get("/", handleAsync(employeeController.getEmployees));
@@ -32,5 +35,8 @@ router.patch("/:id", handleAsync(employeeController.updateEmployee));
 
 // DELETE /employees/:id
 router.delete("/:id", handleAsync(employeeController.deleteEmployee));
+
+// PATCH /employees/:id/upload-image
+router.post("/:id/upload-image", upload.single("image"), handleAsync(employeeController.uploadProfilePicture));
 
 module.exports = router;

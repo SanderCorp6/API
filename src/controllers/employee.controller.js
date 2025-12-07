@@ -1,5 +1,7 @@
 const HTTP_STATUS = require("../utils/httpStatus");
 const EmployeeService = require("../services/employee.service");
+const { uploadFileToS3 } = require("../services/upload.service");
+const AppError = require("../utils/AppError");
 
 const getEmployees = async (req, res) => {
   const filters = req.query;
@@ -68,6 +70,24 @@ const addWarning = async (req, res) => {
   res.status(HTTP_STATUS.CREATED).json({ message: "Warning added!", warning });
 };
 
+const uploadProfilePicture = async (req, res) => {
+  const { id } = req.params;
+  const file = req.file;
+
+  if (!file) {
+    throw new AppError("No file uploaded", 400);
+  }
+
+  const imageUrl = await uploadFileToS3(file.buffer, file.mimetype);
+  const updatedEmployee = await EmployeeService.update(id, { image_url: imageUrl }, req.user.id);
+
+  res.status(200).json({
+    message: "Profile picture updated",
+    image_url: imageUrl,
+    employee: updatedEmployee,
+  });
+};
+
 module.exports = {
   createEmployee,
   getEmployees,
@@ -78,4 +98,5 @@ module.exports = {
   getEmployeeStats,
   addWarning,
   getEmployeeHistory,
+  uploadProfilePicture,
 };
