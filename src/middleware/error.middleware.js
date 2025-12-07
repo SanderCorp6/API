@@ -1,4 +1,4 @@
-const HTTP_STATUS = require("./src/utils/httpStatus");
+const HTTP_STATUS = require("../utils/httpStatus");
 
 // Wrapper for async controllers
 const handleAsync = (fn) => {

@@ -86,7 +86,7 @@ class Employee {
     const query = `
       SELECT
           e.id, e.role,
-          e.first_name, e.last_name, e.full_name,
+          e.first_name, e.last_name, e.full_name, e.is_first_login,
           e.email, e.phone_number, e.address, e.birth_date, e.image_url,
           e.hire_date, e.termination_date, e.contract_type, e.position_id, 
           e.department_id, e.supervisor_id, e.status, e.reentry_date,

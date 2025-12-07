@@ -1,4 +1,4 @@
-const HTTP_STATUS = require("./src/utils/httpStatus");
+const HTTP_STATUS = require("../utils/httpStatus");
 const VacationRequest = require("../models/vacation.model");
 const Employee = require("../models/employee.model");
 const AppError = require("../utils/AppError");

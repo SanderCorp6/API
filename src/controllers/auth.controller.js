@@ -7,4 +7,10 @@ const login = async (req, res) => {
   res.status(HTTP_STATUS.OK).json({ message: "Login successful!", user: data });
 };
 
-module.exports = { login };
+const activate = async (req, res) => {
+  const { token, password } = req.body;
+  const data = await AuthService.activateAccount(token, password);
+  res.status(HTTP_STATUS.OK).json({ message: "Account activated successfully!", user: data });
+};
+
+module.exports = { login, activate };

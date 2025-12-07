@@ -1,4 +1,4 @@
-const HTTP_STATUS = require("./src/utils/httpStatus");
+const HTTP_STATUS = require("../utils/httpStatus");
 const sendWelcomeEmail = require("../services/email.service");
 const Employee = require("../models/employee.model");
 const Position = require("../models/position.model");
@@ -6,6 +6,10 @@ const Department = require("../models/department.model");
 const EmployeeHistory = require("../models/history.model");
 const AppError = require("../utils/AppError");
 const formatCurrency = require("../utils/formatters");
+const jwt = require("jsonwebtoken");
+
+const FRONTEND_URL = process.env.FRONTEND_URL;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 class EmployeeService {
   static async getAll(filters) {
@@ -52,7 +56,6 @@ class EmployeeService {
       !e.contract_type ||
       !e.position_id ||
       !e.department_id ||
-      !e.supervisor_id ||
       !e.salary ||
       !e.periodicity ||
       !e.cost_center ||
@@ -76,9 +79,17 @@ class EmployeeService {
 
     e.payroll_key = `${deptPrefix}-0${randomNumbers}`;
     e.status = "Active";
+    e.supervisor_id = e.supervisor_id || null;
 
     const newEmployee = await Employee.create(e);
-    sendWelcomeEmail(e.email);
+
+    const activationToken = jwt.sign({ id: newEmployee.id, email: newEmployee.email, type: "Activation" }, JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    const activationLink = `${FRONTEND_URL}/activate?token=${activationToken}&email=${newEmployee.email}&name=${newEmployee.full_name}`;
+    console.log(activationLink);
+    sendWelcomeEmail(e.email, activationLink);
+
     return newEmployee;
   }
 

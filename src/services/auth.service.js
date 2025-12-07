@@ -1,4 +1,4 @@
-const HTTP_STATUS = require("./src/utils/httpStatus");
+const HTTP_STATUS = require("../utils/httpStatus");
 const Employee = require("../models/employee.model");
 const AppError = require("../utils/AppError");
 const bcrypt = require("bcrypt");
@@ -16,10 +16,7 @@ class AuthService {
     }
 
     if (employee.is_first_login) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await Employee.setPassword(employee.id, hashedPassword);
-
-      return this.generateToken(employee);
+      throw new AppError("Activate your account with the link sent to your email.", HTTP_STATUS.UNAUTHORIZED);
     }
 
     if (!employee.password) {
@@ -50,6 +47,27 @@ class AuthService {
         { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
       ),
     };
+  }
+
+  static async activateAccount(token, newPassword) {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.type !== "Activation") {
+      throw new AppError("Invalid activation token.", HTTP_STATUS.UNAUTHORIZED);
+    }
+
+    const employee = await Employee.getById(decoded.id);
+
+    if (!employee) {
+      throw new AppError("Employee not found.", HTTP_STATUS.NOT_FOUND);
+    }
+    if (employee.is_first_login !== null && employee.is_first_login === false) {
+      throw new AppError("Employee is already activated.", HTTP_STATUS.UNAUTHORIZED);
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await Employee.setPassword(employee.id, hashedPassword);
+
+    return this.generateToken(employee);
   }
 }
 

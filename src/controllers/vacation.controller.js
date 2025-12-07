@@ -1,4 +1,4 @@
-const HTTP_STATUS = require("./src/utils/httpStatus");
+const HTTP_STATUS = require("../utils/httpStatus");
 const VacationService = require("../services/vacation.service");
 
 const requestVacation = async (req, res) => {
