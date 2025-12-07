@@ -1,18 +1,11 @@
+const HTTP_STATUS = require("./src/utils/httpStatus");
 const sendWelcomeEmail = require("../services/email.service");
 const Employee = require("../models/employee.model");
 const Position = require("../models/position.model");
 const Department = require("../models/department.model");
 const EmployeeHistory = require("../models/history.model");
 const AppError = require("../utils/AppError");
-
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(value);
-};
+const formatCurrency = require("../utils/formatters");
 
 class EmployeeService {
   static async getAll(filters) {
@@ -28,7 +21,7 @@ class EmployeeService {
   static async getById(id) {
     const employee = await Employee.getById(id);
     if (!employee) {
-      throw new AppError("Employee Not Found.", 404);
+      throw new AppError("Employee Not Found.", HTTP_STATUS.NOT_FOUND);
     }
     return employee;
   }
@@ -41,7 +34,7 @@ class EmployeeService {
   static async getHistory(id) {
     const employee = await Employee.getById(id);
     if (!employee) {
-      throw new AppError("Employee not found", 404);
+      throw new AppError("Employee not found", HTTP_STATUS.NOT_FOUND);
     }
 
     return await EmployeeHistory.getByEmployeeId(id);
@@ -65,17 +58,17 @@ class EmployeeService {
       !e.cost_center ||
       !e.vacation_days_total
     ) {
-      throw new AppError("Incomplete fields for user creation", 409);
+      throw new AppError("Incomplete fields for user creation", HTTP_STATUS.CONFLICT);
     }
 
     const existingEmployee = await Employee.getByEmail(e.email);
     if (existingEmployee) {
-      throw new AppError("There is already an employee registered with that email.", 409);
+      throw new AppError("There is already an employee registered with that email.", HTTP_STATUS.CONFLICT);
     }
 
     const department = await Department.getById(e.department_id);
     if (!department) {
-      throw new AppError("Invalid Department ID provided.", 404);
+      throw new AppError("Invalid Department ID provided.", HTTP_STATUS.NOT_FOUND);
     }
 
     const deptPrefix = department.name.substring(0, 3).toUpperCase();
@@ -92,13 +85,13 @@ class EmployeeService {
   static async update(id, dataToUpdate, userId) {
     const existingEmployee = await Employee.getById(id);
     if (!existingEmployee) {
-      throw new AppError("Employee not found.", 404);
+      throw new AppError("Employee not found.", HTTP_STATUS.NOT_FOUND);
     }
 
     if (dataToUpdate.email && dataToUpdate.email !== existingEmployee.email) {
       const emailExists = await Employee.getByEmail(dataToUpdate.email);
       if (emailExists) {
-        throw new AppError("Email is already in use by another employee.", 409);
+        throw new AppError("Email is already in use by another employee.", HTTP_STATUS.CONFLICT);
       }
     }
 
@@ -169,14 +162,14 @@ class EmployeeService {
   static async delete(id) {
     const deleted = await Employee.delete(id);
     if (!deleted) {
-      throw new AppError("Employee not found.", 404);
+      throw new AppError("Employee not found.", HTTP_STATUS.NOT_FOUND);
     }
   }
 
   static async addWarning(id, reason, userId) {
     const employee = await Employee.getById(id);
     if (!employee) {
-      throw new AppError("Employee not found", 404);
+      throw new AppError("Employee not found", HTTP_STATUS.NOT_FOUND);
     }
 
     return await EmployeeHistory.create({

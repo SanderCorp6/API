@@ -1,24 +1,26 @@
 const pool = require("../config/db.config");
 const AppError = require("../utils/AppError");
+const HTTP_STATUS = require("../utils/httpStatus");
 
 class Employee {
   // get employees, with dynamic filtering
   static async getAll(filters = {}) {
     let baseQuery = `
       SELECT
-          e.id, 
-          e.full_name, e.email,
-          e.position_id, e.hire_date,
-          e.department_id, e.status,
-          e.salary,
-          d.name AS department_name,
-          p.name AS position_name
+        e.id, 
+        e.role, e.full_name, e.email , e.phone_number,
+        e.address, e.birth_date, e.image_url,
+        e.hire_date, e.contract_type, e.payroll_key, e.periodicity, e.cost_center,
+        e.position_id, e.department_id, e.status,
+        e.salary, e.payroll_key, e.periodicity, e.cost_center,
+        d.name AS department_name,
+        p.name AS position_name
       FROM
-          employees AS e
+        employees AS e
       LEFT JOIN
-          departments AS d ON e.department_id = d.id
+        departments AS d ON e.department_id = d.id
       LEFT JOIN
-          positions AS p ON e.position_id = p.id
+        positions AS p ON e.position_id = p.id
     `;
 
     const whereClauses = [];
@@ -145,7 +147,7 @@ class Employee {
         ...departmentStats,
       };
     } catch {
-      throw new AppError("Could not fetch dashboard stats.", 500);
+      throw new AppError("Could not fetch dashboard stats.", HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -234,7 +236,7 @@ class Employee {
       const result = await pool.query("DELETE FROM employees WHERE id = $1", [id]);
       return result.rowCount > 0;
     } catch {
-      throw new AppError("Cannot delete employee with existing dependencies.", 409);
+      throw new AppError("Cannot delete employee with existing dependencies.", HTTP_STATUS.CONFLICT);
     }
   }
 

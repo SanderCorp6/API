@@ -1,3 +1,4 @@
+const HTTP_STATUS = require("./src/utils/httpStatus");
 const transporter = require("../config/email.config");
 const AppError = require("../utils/AppError");
 
@@ -53,7 +54,7 @@ async function sendWelcomeEmail(to) {
   try {
     await transporter.sendMail(mailOptions);
   } catch {
-    AppError("Error while sending email:", 500);
+    AppError("Error while sending email:", HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 }
 

@@ -1,3 +1,5 @@
+const HTTP_STATUS = require("./src/utils/httpStatus");
+
 // Wrapper for async controllers
 const handleAsync = (fn) => {
   return (req, res, next) => {
@@ -7,13 +9,13 @@ const handleAsync = (fn) => {
 
 // Middlware for error handling
 const globalErrorHandler = (err, req, res, _next) => {
-  err.statusCode = err.statusCode || 500;
+  err.statusCode = err.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR;
   err.status = err.status || "error";
 
   // server error
   if (!err.isOperational) {
     console.log(err);
-    return res.status(500).json({
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       status: "error",
       message: "Server side error.",
     });

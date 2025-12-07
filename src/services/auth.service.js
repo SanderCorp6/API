@@ -1,3 +1,4 @@
+const HTTP_STATUS = require("./src/utils/httpStatus");
 const Employee = require("../models/employee.model");
 const AppError = require("../utils/AppError");
 const bcrypt = require("bcrypt");
@@ -8,10 +9,10 @@ class AuthService {
     const employee = await Employee.getByEmail(email);
 
     if (!employee) {
-      throw new AppError("Invalid email or password.", 401);
+      throw new AppError("Invalid email or password.", HTTP_STATUS.UNAUTHORIZED);
     }
     if (employee.status !== "Active") {
-      throw new AppError("Employee is not active.", 403);
+      throw new AppError("Employee is not active.", HTTP_STATUS.UNAUTHORIZED);
     }
 
     if (employee.is_first_login) {
@@ -22,12 +23,12 @@ class AuthService {
     }
 
     if (!employee.password) {
-      throw new AppError("Account does not have a configured password..", 400);
+      throw new AppError("Account does not have a configured password..", HTTP_STATUS.BAD_REQUEST);
     }
 
     const isMatch = await bcrypt.compare(password, employee.password);
     if (!isMatch) {
-      throw new AppError("Invalid email or password.", 401);
+      throw new AppError("Invalid email or password.", HTTP_STATUS.UNAUTHORIZED);
     }
 
     return this.generateToken(employee);
