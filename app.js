@@ -7,6 +7,7 @@ const employeeRouter = require("./src/routes/employee.routes");
 const vacationRouter = require("./src/routes/vacation.routes");
 const departmentRouter = require("./src/routes/department.routes");
 const positionRouter = require("./src/routes/position.routes");
+const openingRouter = require("./src/routes/opening.routes");
 const AppError = require("./src/utils/AppError");
 const HTTP_STATUS = require("./src/utils/httpStatus");
 const { globalErrorHandler } = require("./src/middleware/error.middleware");
@@ -21,6 +22,7 @@ app.use("/employees", employeeRouter);
 app.use("/vacations", vacationRouter);
 app.use("/departments", departmentRouter);
 app.use("/positions", positionRouter);
+app.use("/openings", openingRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to RRHH API");

@@ -1,0 +1,32 @@
+const HTTP_STATUS = require("../utils/httpStatus");
+const OpeningService = require("../services/opening.service");
+
+const createOpening = async (req, res) => {
+  const openingData = req.body;
+  const newOpening = await OpeningService.createOpening(openingData);
+
+  res.status(HTTP_STATUS.CREATED).json({
+    message: "Opening created successfully!",
+    opening: newOpening,
+  });
+};
+
+const getAllOpenings = async (req, res) => {
+  const { status } = req.query;
+  const openings = await OpeningService.getAllOpenings({ status });
+
+  res.status(HTTP_STATUS.OK).json({ openings });
+};
+
+const getOpeningById = async (req, res) => {
+  const { id } = req.params;
+  const opening = await OpeningService.getOpeningById(id);
+
+  res.status(HTTP_STATUS.OK).json({ opening });
+};
+
+module.exports = {
+  createOpening,
+  getAllOpenings,
+  getOpeningById,
+};
