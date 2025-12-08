@@ -19,14 +19,22 @@ class VacationRequest {
     return result.rows;
   }
 
-  static async getAll() {
-    const query = `
+  static async getAll(status = null) {
+    let query = `
       SELECT vr.*, e.full_name as employee_name 
       FROM vacation_requests vr
       JOIN employees e ON vr.employee_id = e.id
-      ORDER BY vr.created_at DESC
     `;
-    const result = await pool.query(query);
+
+    const params = [];
+    if (status) {
+      query += ` WHERE vr.status = $1`;
+      params.push(status);
+    }
+
+    query += ` ORDER BY vr.created_at DESC`;
+
+    const result = await pool.query(query, params);
     return result.rows;
   }
 
@@ -36,9 +44,9 @@ class VacationRequest {
     return result.rows[0];
   }
 
-  static async updateStatus(requestId, status, userId) {
+  static async updateStatus(id, status, userId) {
     const query = `UPDATE vacation_requests SET status = $1, reviewed_by = $2 WHERE id = $3 RETURNING *`;
-    const result = await pool.query(query, [status, userId, requestId]);
+    const result = await pool.query(query, [status, userId, id]);
     return result.rows[0];
   }
 

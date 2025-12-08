@@ -1,0 +1,19 @@
+const VACATION_STATUS = {
+  PENDING: "Pending",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+};
+
+const EMPLOYEE_STATUS = {
+  ACTIVE: "Active",
+  INACTIVE: "Inactive",
+};
+
+const HISTORY_CHANGE_TYPES = {
+  POSITION: "POSITION",
+  SALARY: "SALARY",
+  DEPARTMENT: "DEPARTMENT",
+  WARNING: "WARNING",
+};
+
+module.exports = { VACATION_STATUS, EMPLOYEE_STATUS, HISTORY_CHANGE_TYPES };

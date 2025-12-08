@@ -1,8 +1,9 @@
+const HTTP_STATUS = require("../utils/httpStatus");
 const transporter = require("../config/email.config");
 const AppError = require("../utils/AppError");
 
 // Send Email function for Sign Up
-async function sendWelcomeEmail(to) {
+async function sendWelcomeEmail(to, activationLink) {
   const mailOptions = {
     to,
     subject: "Welcome to Sander RRHH!",
@@ -30,8 +31,8 @@ async function sendWelcomeEmail(to) {
                                 You can now log in and start exploring all the features our app offers.
                             </p>
                             <div style="text-align:center; margin:30px 0;">
-                                <a href="https://samuelconra.com/" style="background-color:#007bff; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:bold;">
-                                    Log In
+                                <a href="${activationLink}" style="background-color:#007bff; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:bold;">
+                                    Activate Account
                                 </a>
                             </div>
                             <p style="font-size:14px; color:#555;">
@@ -53,7 +54,7 @@ async function sendWelcomeEmail(to) {
   try {
     await transporter.sendMail(mailOptions);
   } catch {
-    AppError("Error while sending email:", 500);
+    AppError("Error while sending email:", HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 }
 

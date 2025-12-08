@@ -1,24 +1,26 @@
 const pool = require("../config/db.config");
 const AppError = require("../utils/AppError");
+const HTTP_STATUS = require("../utils/httpStatus");
 
 class Employee {
   // get employees, with dynamic filtering
   static async getAll(filters = {}) {
     let baseQuery = `
       SELECT
-          e.id, 
-          e.full_name, e.email,
-          e.position_id, e.hire_date,
-          e.department_id, e.status,
-          e.salary,
-          d.name AS department_name,
-          p.name AS position_name
+        e.id, 
+        e.role, e.full_name, e.email , e.phone_number,
+        e.address, e.birth_date, e.image_url,
+        e.hire_date, e.contract_type, e.payroll_key, e.periodicity, e.cost_center,
+        e.position_id, e.department_id, e.status,
+        e.salary, e.payroll_key, e.periodicity, e.cost_center,
+        d.name AS department_name,
+        p.name AS position_name
       FROM
-          employees AS e
+        employees AS e
       LEFT JOIN
-          departments AS d ON e.department_id = d.id
+        departments AS d ON e.department_id = d.id
       LEFT JOIN
-          positions AS p ON e.position_id = p.id
+        positions AS p ON e.position_id = p.id
     `;
 
     const whereClauses = [];
@@ -84,7 +86,7 @@ class Employee {
     const query = `
       SELECT
           e.id, e.role,
-          e.first_name, e.last_name, e.full_name,
+          e.first_name, e.last_name, e.full_name, e.is_first_login,
           e.email, e.phone_number, e.address, e.birth_date, e.image_url,
           e.hire_date, e.termination_date, e.contract_type, e.position_id, 
           e.department_id, e.supervisor_id, e.status, e.reentry_date,
@@ -111,7 +113,7 @@ class Employee {
   // get by email
   static async getByEmail(email) {
     const query = `
-      SELECT id, full_name, email, role, password, is_first_login, status 
+      SELECT id, full_name, email, password, is_first_login, status 
       FROM employees WHERE email = $1
     `;
     const result = await pool.query(query, [email]);
@@ -145,7 +147,7 @@ class Employee {
         ...departmentStats,
       };
     } catch {
-      throw new AppError("Could not fetch dashboard stats.", 500);
+      throw new AppError("Could not fetch dashboard stats.", HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -195,8 +197,8 @@ class Employee {
           position_id = $10, department_id = $11, supervisor_id = $12, status = $13,
           salary = $14, payroll_key = $15, periodicity = $16, cost_center = $17, 
           vacation_days_total = $18, vacation_days_taken = $19,
-          reentry_date = $20, role = $21
-      WHERE id = $22
+          reentry_date = $20, role = $21, image_url = $22
+      WHERE id = $23
       RETURNING *
     `;
 
@@ -222,6 +224,7 @@ class Employee {
       e.vacation_days_taken,
       e.reentry_date,
       e.role,
+      e.image_url,
       id,
     ];
     const result = await pool.query(query, params);
@@ -234,7 +237,7 @@ class Employee {
       const result = await pool.query("DELETE FROM employees WHERE id = $1", [id]);
       return result.rowCount > 0;
     } catch {
-      throw new AppError("Cannot delete employee with existing dependencies.", 409);
+      throw new AppError("Cannot delete employee with existing dependencies.", HTTP_STATUS.CONFLICT);
     }
   }
 

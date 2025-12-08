@@ -1,14 +1,17 @@
+const HTTP_STATUS = require("../utils/httpStatus");
 const EmployeeService = require("../services/employee.service");
+const { uploadFileToS3 } = require("../services/upload.service");
+const AppError = require("../utils/AppError");
 
 const getEmployees = async (req, res) => {
   const filters = req.query;
   const employees = await EmployeeService.getAll(filters);
-  res.status(200).json({ employees });
+  res.status(HTTP_STATUS.OK).json({ employees });
 };
 
 const getEmployeeOptions = async (req, res) => {
   const employees = await EmployeeService.getSimpleAll();
-  res.status(200).json({ employees });
+  res.status(HTTP_STATUS.OK).json({ employees });
 };
 
 const getEmployeeById = async (req, res) => {
@@ -16,7 +19,7 @@ const getEmployeeById = async (req, res) => {
   const e = await EmployeeService.getById(id);
 
   // prettier-ignore
-  res.status(200).json({
+  res.status(HTTP_STATUS.OK).json({
     id: e.id, role: e.role, 
     first_name: e.first_name, last_name: e.last_name, full_name: e.full_name, email: e.email, phone_number: e.phone_number,
     address: e.address, birth_date: e.birth_date, image_url: e.image_url, hire_date: e.hire_date, termination_date: e.termination_date, contract_type: e.contract_type,
@@ -29,20 +32,20 @@ const getEmployeeById = async (req, res) => {
 
 const getEmployeeStats = async (req, res) => {
   const { totalEmployees, activeEmployees, inactiveEmployees, totalDepartments } = await EmployeeService.getStats();
-  res.status(200).json({ totalEmployees, activeEmployees, inactiveEmployees, totalDepartments });
+  res.status(HTTP_STATUS.OK).json({ totalEmployees, activeEmployees, inactiveEmployees, totalDepartments });
 };
 
 const getEmployeeHistory = async (req, res) => {
   const { id } = req.params;
   const history = await EmployeeService.getHistory(id);
-  res.status(200).json({ history });
+  res.status(HTTP_STATUS.OK).json({ history });
 };
 
 const createEmployee = async (req, res) => {
   const data = req.body;
   const userId = req.user.id;
   const employee = await EmployeeService.create(data, userId);
-  res.status(201).json({ message: "Employee created!", employee });
+  res.status(HTTP_STATUS.CREATED).json({ message: "Employee created!", employee });
 };
 
 const updateEmployee = async (req, res) => {
@@ -50,7 +53,7 @@ const updateEmployee = async (req, res) => {
   const data = req.body;
   const userId = req.user.id;
   const updatedEmployee = await EmployeeService.update(id, data, userId);
-  res.status(200).json({ message: "Employee updated!", employee: updatedEmployee });
+  res.status(HTTP_STATUS.OK).json({ message: "Employee updated!", employee: updatedEmployee });
 };
 
 const deleteEmployee = async (req, res) => {
@@ -64,7 +67,25 @@ const addWarning = async (req, res) => {
   const { reason } = req.body;
   const userId = req.user.id;
   const warning = await EmployeeService.addWarning(id, reason, userId);
-  res.status(201).json({ message: "Warning added!", warning });
+  res.status(HTTP_STATUS.CREATED).json({ message: "Warning added!", warning });
+};
+
+const uploadProfilePicture = async (req, res) => {
+  const { id } = req.params;
+  const file = req.file;
+
+  if (!file) {
+    throw new AppError("No file uploaded", 400);
+  }
+
+  const imageUrl = await uploadFileToS3(file.buffer, file.mimetype);
+  const updatedEmployee = await EmployeeService.update(id, { image_url: imageUrl }, req.user.id);
+
+  res.status(200).json({
+    message: "Profile picture updated",
+    image_url: imageUrl,
+    employee: updatedEmployee,
+  });
 };
 
 module.exports = {
@@ -77,4 +98,5 @@ module.exports = {
   getEmployeeStats,
   addWarning,
   getEmployeeHistory,
+  uploadProfilePicture,
 };

@@ -8,6 +8,7 @@ const vacationRouter = require("./src/routes/vacation.routes");
 const departmentRouter = require("./src/routes/department.routes");
 const positionRouter = require("./src/routes/position.routes");
 const AppError = require("./src/utils/AppError");
+const HTTP_STATUS = require("./src/utils/httpStatus");
 const { globalErrorHandler } = require("./src/middleware/error.middleware");
 
 const app = express();
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.use((req, res, next) => {
-  next(new AppError(`Cannot find ${req.originalUrl} in this server.`, 404));
+  next(new AppError(`Cannot find ${req.originalUrl} in this server.`, HTTP_STATUS.NOT_FOUND));
 });
 app.use(globalErrorHandler);
 
