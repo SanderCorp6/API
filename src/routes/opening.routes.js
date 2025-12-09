@@ -1,14 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const openingController = require('../controllers/opening.controller');
+const authenticateToken = require("../middleware/auth.middleware");
+const { handleAsync } = require("../middleware/error.middleware");
+
+router.use(authenticateToken);
 
 // GET /openings
-router.get('/', openingController.getAllOpenings);
+router.get('/', handleAsync(openingController.getAllOpenings));
 
 // GET /openings/:id
-router.get('/:id', openingController.getOpeningById);
+router.get('/:id', handleAsync(openingController.getOpeningById));
 
 // POST /openings
-router.post('/', openingController.createOpening);
+router.post('/', handleAsync(openingController.createOpening));
+
+// Patch /openings/:id
+router.patch('/:id', handleAsync(openingController.updateOpening));
 
 module.exports = router;

@@ -25,8 +25,21 @@ const getOpeningById = async (req, res) => {
   res.status(HTTP_STATUS.OK).json({ opening });
 };
 
+const updateOpening = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  const updatedOpening = await OpeningService.updateOpening(id, updates);
+
+  res.status(HTTP_STATUS.OK).json({
+    message: "Opening updated successfully",
+    opening: updatedOpening,
+  });
+};
+
 module.exports = {
   createOpening,
   getAllOpenings,
   getOpeningById,
+  updateOpening,
 };
