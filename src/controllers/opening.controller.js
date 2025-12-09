@@ -12,8 +12,8 @@ const createOpening = async (req, res) => {
 };
 
 const getAllOpenings = async (req, res) => {
-  const { status } = req.query;
-  const openings = await OpeningService.getAllOpenings({ status });
+  const filters = req.query;
+  const openings = await OpeningService.getAllOpenings(filters);
 
   res.status(HTTP_STATUS.OK).json({ openings });
 };
