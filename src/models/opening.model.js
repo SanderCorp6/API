@@ -1,4 +1,6 @@
 const pool = require("../config/db.config");
+const AppError = require("../utils/AppError");
+const HTTP_STATUS = require("../utils/httpStatus");
 
 class Opening {
   static async create(data) {
@@ -79,7 +81,9 @@ class Opening {
 
   static async update(id, data) {
     const keys = Object.keys(data);
-    if (keys.length === 0) return null;
+    if (keys.length === 0) {
+      throw new AppError("No data to update.", HTTP_STATUS.BAD_REQUEST); 
+    };
 
     const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
     
