@@ -125,6 +125,11 @@ class Opening {
     const result = await pool.query(query, values);
     return result.rows[0];
   }
+
+  static async delete(id) {
+    const result = await pool.query("DELETE FROM openings WHERE id = $1", [id]);
+    return result.rowCount > 0;
+  }
 }
 
 module.exports = Opening;

@@ -5,6 +5,21 @@ const { handleAsync } = require("../middleware/error.middleware");
 
 router.use(authenticateToken);
 
+// GET /vacations/me - My vacations
+router.get("/me", handleAsync(vacationController.getMyVacations));
+
+// GET /vacations/team - Team requests
+router.get("/team", handleAsync(vacationController.getTeamRequests));
+
+// POST /vacations/request - New request
+router.post("/request", handleAsync(vacationController.createRequest));
+
+// POST /vacations/:id/approve
+router.post("/:id/approve", handleAsync(vacationController.approveRequest));
+
+// POST /vacations/:id/reject
+router.post("/:id/reject", handleAsync(vacationController.rejectRequest));
+
 // GET /vacations
 router.get("/", handleAsync(vacationController.getAllRequests));
 
@@ -13,11 +28,5 @@ router.get("/employee/:employeeId", handleAsync(vacationController.getEmployeeRe
 
 // GET /vacations/:id
 router.get("/:id", handleAsync(vacationController.getRequestById));
-
-// POST /vacations/:employeeId
-router.post("/:employeeId", handleAsync(vacationController.requestVacation));
-
-// PATCH /vacations/:id
-router.patch("/:id", handleAsync(vacationController.updateRequestStatus));
 
 module.exports = router;
