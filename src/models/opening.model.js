@@ -47,23 +47,46 @@ class Opening {
     return result.rows[0];
   }
 
-  static async getAll(status = null) {
-    let query = `
+  static async getAll(filters = {}) {
+    let baseQuery = `
       SELECT o.*, p.name as position_name, d.name as department_name
       FROM openings o
       LEFT JOIN positions p ON o.position_id = p.id
       LEFT JOIN departments d ON o.department_id = d.id
     `;
 
+    const whereClauses = [];
     const params = [];
-    if (status) {
-      query += ` WHERE o.status = $1`;
-      params.push(status);
+
+    if (filters.status) {
+      params.push(filters.status);
+      whereClauses.push(`o.status = $${params.length}`);
+    }
+    if (filters.departmentId) {
+      params.push(filters.departmentId);
+      whereClauses.push(`o.department_id = $${params.length}`);
+    }
+    if (filters.positionId) {
+      params.push(filters.positionId);
+      whereClauses.push(`o.position_id = $${params.length}`);
+    }
+    if (filters.contractType) {
+      params.push(filters.contractType);
+      whereClauses.push(`o.contract_type = $${params.length}`);
+    }
+    if (filters.search) {
+      const searchTerm = filters.search.trim();
+      params.push(`%${searchTerm}%`);
+      whereClauses.push(`(o.title ILIKE $${params.length})`);
     }
 
-    query += ` ORDER BY o.created_at DESC`;
+    if (whereClauses.length > 0) {
+      baseQuery += " WHERE " + whereClauses.join(" AND ");
+    }
 
-    const result = await pool.query(query, params);
+    baseQuery += ` ORDER BY o.created_at DESC`;
+
+    const result = await pool.query(baseQuery, params);
     return result.rows;
   }
 
@@ -82,11 +105,11 @@ class Opening {
   static async update(id, data) {
     const keys = Object.keys(data);
     if (keys.length === 0) {
-      throw new AppError("No data to update.", HTTP_STATUS.BAD_REQUEST); 
-    };
+      throw new AppError("No data to update.", HTTP_STATUS.BAD_REQUEST);
+    }
 
-    const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
-    
+    const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(", ");
+
     const values = [...Object.values(data), id];
     const idParamIndex = keys.length + 1;
 

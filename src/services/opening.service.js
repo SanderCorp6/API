@@ -18,7 +18,7 @@ class OpeningService {
   }
 
   static async getAllOpenings(filters = {}) {
-    return await Opening.getAll(filters.status);
+    return await Opening.getAll(filters);
   }
 
   static async getOpeningById(id) {
@@ -35,14 +35,14 @@ class OpeningService {
       throw new AppError("Opening not found", HTTP_STATUS.NOT_FOUND);
     }
 
-    if (updates.status === 'Closed') {
-      if (!updates.closing_reason || updates.closing_reason.trim() === '') {
+    if (updates.status === "Closed") {
+      if (!updates.closing_reason || updates.closing_reason.trim() === "") {
         throw new AppError("A closing reason is required when closing a vacancy", HTTP_STATUS.BAD_REQUEST);
       }
       updates.closed_at = new Date();
     }
 
-    if ((updates.status === 'Open' || updates.status === 'Paused') && existingOpening.status === 'Closed') {
+    if ((updates.status === "Open" || updates.status === "Paused") && existingOpening.status === "Closed") {
       updates.closing_reason = null;
       updates.closed_at = null;
     }
