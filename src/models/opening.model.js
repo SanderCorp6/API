@@ -10,6 +10,7 @@ class Opening {
         position_id, 
         department_id, 
         hiring_manager_id,
+        recruiter_id,
         description, 
         responsibilities, 
         requirements,
@@ -22,7 +23,7 @@ class Opening {
         target_date, 
         status
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'Open')
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 'Open')
       RETURNING *
     `;
 
@@ -31,6 +32,7 @@ class Opening {
       data.position_id,
       data.department_id,
       data.hiring_manager_id,
+      data.recruiter_id,
       data.description,
       data.responsibilities,
       data.requirements,
