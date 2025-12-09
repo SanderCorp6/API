@@ -9,10 +9,43 @@ const requestVacation = async (req, res) => {
   res.status(HTTP_STATUS.CREATED).json({ message: "Vacation request created!", vacationRequest });
 };
 
+const createRequest = async (req, res) => {
+  const employeeId = req.user.id;
+  const { startDate, endDate, type, description } = req.body;
+
+  const vacationRequest = await VacationService.requestVacation(employeeId, startDate, endDate, type, description);
+  res.status(HTTP_STATUS.CREATED).json({ message: "Vacation request submitted!", vacationRequest });
+};
+
 const getEmployeeRequests = async (req, res) => {
   const { employeeId } = req.params;
   const vacationRequests = await VacationService.getEmployeeRequests(employeeId);
   res.status(HTTP_STATUS.OK).json({ vacationRequests });
+};
+
+const getMyVacations = async (req, res) => {
+  const employeeId = req.user.id;
+  const vacationRequests = await VacationService.getEmployeeRequests(employeeId);
+  res.status(HTTP_STATUS.OK).json(vacationRequests);
+};
+
+const getTeamRequests = async (req, res) => {
+  const vacationRequests = await VacationService.getTeamRequests();
+  res.status(HTTP_STATUS.OK).json(vacationRequests);
+};
+
+const approveRequest = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+  const updatedRequest = await VacationService.updateStatus(id, "Approved", userId);
+  res.status(HTTP_STATUS.OK).json({ message: "Request approved", updatedRequest });
+};
+
+const rejectRequest = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+  const updatedRequest = await VacationService.updateStatus(id, "Rejected", userId);
+  res.status(HTTP_STATUS.OK).json({ message: "Request rejected", updatedRequest });
 };
 
 const getRequestById = async (req, res) => {
@@ -38,8 +71,13 @@ const updateRequestStatus = async (req, res) => {
 
 module.exports = {
   requestVacation,
+  createRequest,
   getEmployeeRequests,
+  getMyVacations,
+  getTeamRequests,
   getAllRequests,
   getRequestById,
   updateRequestStatus,
+  approveRequest,
+  rejectRequest,
 };

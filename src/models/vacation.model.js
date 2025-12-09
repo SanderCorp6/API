@@ -14,14 +14,38 @@ class VacationRequest {
   }
 
   static async getByEmployeeId(employeeId) {
-    const query = `SELECT * FROM vacation_requests WHERE employee_id = $1 ORDER BY created_at DESC`;
+    const query = `
+      SELECT 
+        id, 
+        employee_id as "employeeId",
+        start_date as "startDate",
+        end_date as "endDate",
+        days_requested as "workingDays",
+        type,
+        description,
+        status,
+        created_at as "createdAt"
+      FROM vacation_requests 
+      WHERE employee_id = $1 
+      ORDER BY created_at DESC
+    `;
     const result = await pool.query(query, [employeeId]);
     return result.rows;
   }
 
   static async getAll(status = null) {
     let query = `
-      SELECT vr.*, e.full_name as employee_name 
+      SELECT 
+        vr.id, 
+        vr.employee_id as "employeeId",
+        vr.start_date as "startDate",
+        vr.end_date as "endDate",
+        vr.days_requested as "workingDays",
+        vr.type,
+        vr.description,
+        vr.status,
+        vr.created_at as "createdAt",
+        e.full_name as "employeeName" 
       FROM vacation_requests vr
       JOIN employees e ON vr.employee_id = e.id
     `;
@@ -62,6 +86,29 @@ class VacationRequest {
         `;
     const result = await pool.query(query, [employeeId, startDate, endDate]);
     return result.rowCount > 0;
+  }
+
+  static async getAllPending() {
+    const query = `
+      SELECT 
+        vr.id, 
+        vr.employee_id as "employeeId",
+        vr.start_date as "startDate",
+        vr.end_date as "endDate",
+        vr.days_requested as "workingDays",
+        vr.type,
+        vr.description,
+        vr.status,
+        vr.created_at as "createdAt",
+        e.full_name as "employeeName", 
+        e.image_url as "employeeAvatar"
+      FROM vacation_requests vr
+      JOIN employees e ON vr.employee_id = e.id
+      WHERE vr.status = 'Pending'
+      ORDER BY vr.created_at DESC
+    `;
+    const result = await pool.query(query);
+    return result.rows;
   }
 }
 
