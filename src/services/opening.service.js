@@ -28,6 +28,28 @@ class OpeningService {
     }
     return opening;
   }
+
+  static async updateOpening(id, updates) {
+    const existingOpening = await Opening.getById(id);
+    if (!existingOpening) {
+      throw new AppError("Opening not found", HTTP_STATUS.NOT_FOUND);
+    }
+
+    if (updates.status === 'Closed') {
+      if (!updates.closing_reason || updates.closing_reason.trim() === '') {
+        throw new AppError("A closing reason is required when closing a vacancy", HTTP_STATUS.BAD_REQUEST);
+      }
+      updates.closed_at = new Date();
+    }
+
+    if ((updates.status === 'Open' || updates.status === 'Paused') && existingOpening.status === 'Closed') {
+      updates.closing_reason = null;
+      updates.closed_at = null;
+    }
+
+    const updatedOpening = await Opening.update(id, updates);
+    return updatedOpening;
+  }
 }
 
 module.exports = OpeningService;

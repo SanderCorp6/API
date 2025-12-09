@@ -76,6 +76,26 @@ class Opening {
     const result = await pool.query(query, [id]);
     return result.rows[0];
   }
+
+  static async update(id, data) {
+    const keys = Object.keys(data);
+    if (keys.length === 0) return null;
+
+    const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+    
+    const values = [...Object.values(data), id];
+    const idParamIndex = keys.length + 1;
+
+    const query = `
+      UPDATE openings 
+      SET ${setClause}, updated_at = NOW()
+      WHERE id = $${idParamIndex}
+      RETURNING *
+    `;
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
 }
 
 module.exports = Opening;
