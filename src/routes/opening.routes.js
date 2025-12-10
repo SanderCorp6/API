@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const openingController = require("../controllers/opening.controller");
 const authenticateToken = require("../middleware/auth.middleware");
+const authorize = require("../middleware/authorize.middleware");
 const { handleAsync } = require("../middleware/error.middleware");
 
 router.use(authenticateToken);
+router.use(authorize(["Administrator", "HR"]));
 
 // GET /openings
 router.get("/", handleAsync(openingController.getAllOpenings));

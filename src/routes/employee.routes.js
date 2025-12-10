@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const employeeController = require("../controllers/employee.controller");
 const authenticateToken = require("../middleware/auth.middleware");
+const authorize = require("../middleware/authorize.middleware");
 const { handleAsync } = require("../middleware/error.middleware");
 
 router.use(authenticateToken);
@@ -19,22 +20,22 @@ router.get("/options", handleAsync(employeeController.getEmployeeOptions));
 router.get("/stats", handleAsync(employeeController.getEmployeeStats));
 
 // GET /employees/history/:id
-router.get("/history/:id", handleAsync(employeeController.getEmployeeHistory));
+router.get("/history/:id", authorize(["Administrator", "HR"]), handleAsync(employeeController.getEmployeeHistory));
 
 // GET /employees/:id
-router.get("/:id", handleAsync(employeeController.getEmployeeById));
+router.get("/:id", authorize(["Administrator", "HR"]), handleAsync(employeeController.getEmployeeById));
 
 // POST /employees/
-router.post("/", handleAsync(employeeController.createEmployee));
+router.post("/", authorize(["Administrator"]), handleAsync(employeeController.createEmployee));
 
 // POST /employees/warnings/:id
-router.post("/warnings/:id", handleAsync(employeeController.addWarning));
+router.post("/warnings/:id", authorize(["Administrator", "HR"]), handleAsync(employeeController.addWarning));
 
 // PATCH /employees/:id
-router.patch("/:id", handleAsync(employeeController.updateEmployee));
+router.patch("/:id", authorize(["Administrator", "HR"]), handleAsync(employeeController.updateEmployee));
 
 // DELETE /employees/:id
-router.delete("/:id", handleAsync(employeeController.deleteEmployee));
+router.delete("/:id", authorize(["Administrator", "HR"]), handleAsync(employeeController.deleteEmployee));
 
 // PATCH /employees/:id/upload-image
 router.post("/:id/upload-image", upload.single("image"), handleAsync(employeeController.uploadProfilePicture));

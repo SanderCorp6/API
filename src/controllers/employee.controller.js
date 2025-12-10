@@ -5,7 +5,14 @@ const AppError = require("../utils/AppError");
 
 const getEmployees = async (req, res) => {
   const filters = req.query;
-  const employees = await EmployeeService.getAll(filters);
+  let employees = await EmployeeService.getAll(filters);
+
+  if (req.user.role !== "Administrator") {
+    employees = employees.map((emp) => {
+      const { salary, ...rest } = emp;
+      return rest;
+    });
+  }
   res.status(HTTP_STATUS.OK).json({ employees });
 };
 

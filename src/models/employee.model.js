@@ -113,7 +113,7 @@ class Employee {
   // get by email
   static async getByEmail(email) {
     const query = `
-      SELECT id, full_name, email, password, is_first_login, status 
+      SELECT id, full_name, email, password, role, is_first_login, status 
       FROM employees WHERE email = $1
     `;
     const result = await pool.query(query, [email]);
