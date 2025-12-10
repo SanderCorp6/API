@@ -37,9 +37,19 @@ const updateOpening = async (req, res) => {
   });
 };
 
+const deleteOpening = async (req, res) => {
+  const { id } = req.params;
+  await OpeningService.deleteOpening(id);
+
+  res.status(HTTP_STATUS.OK).json({
+    message: "Opening deleted successfully",
+  });
+};
+
 module.exports = {
   createOpening,
   getAllOpenings,
   getOpeningById,
   updateOpening,
+  deleteOpening,
 };

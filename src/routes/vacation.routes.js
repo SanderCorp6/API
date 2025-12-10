@@ -30,10 +30,4 @@ router.get("/employee/:employeeId", handleAsync(vacationController.getEmployeeRe
 // GET /vacations/:id
 router.get("/:id", handleAsync(vacationController.getRequestById));
 
-// POST /vacations/:employeeId
-router.post("/:employeeId", handleAsync(vacationController.requestVacation));
-
-// PATCH /vacations/:id
-router.patch("/:id", handleAsync(vacationController.updateRequestStatus));
-
 module.exports = router;

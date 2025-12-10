@@ -20,4 +20,7 @@ router.post("/", handleAsync(openingController.createOpening));
 // Patch /openings/:id
 router.patch("/:id", handleAsync(openingController.updateOpening));
 
+// DELETE /openings/:id
+router.delete("/:id", handleAsync(openingController.deleteOpening));
+
 module.exports = router;

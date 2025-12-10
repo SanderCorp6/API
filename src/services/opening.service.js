@@ -50,6 +50,13 @@ class OpeningService {
     const updatedOpening = await Opening.update(id, updates);
     return updatedOpening;
   }
+
+  static async deleteOpening(id) {
+    const deleted = await Opening.delete(id);
+    if (!deleted) {
+      throw new AppError("Opening not found", HTTP_STATUS.NOT_FOUND);
+    }
+  }
 }
 
 module.exports = OpeningService;

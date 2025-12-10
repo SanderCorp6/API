@@ -141,6 +141,10 @@ class VacationService {
 
     return await VacationRequest.updateStatus(requestId, status, userId);
   }
+
+  static async getTeamRequests() {
+    return await VacationRequest.getAllPending();
+  }
 }
 
 module.exports = VacationService;
