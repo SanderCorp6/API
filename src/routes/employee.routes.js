@@ -20,10 +20,10 @@ router.get("/options", handleAsync(employeeController.getEmployeeOptions));
 router.get("/stats", handleAsync(employeeController.getEmployeeStats));
 
 // GET /employees/history/:id
-router.get("/history/:id", authorize(["Administrator", "HR"]), handleAsync(employeeController.getEmployeeHistory));
+router.get("/history/:id", handleAsync(employeeController.getEmployeeHistory));
 
 // GET /employees/:id
-router.get("/:id", authorize(["Administrator", "HR"]), handleAsync(employeeController.getEmployeeById));
+router.get("/:id", handleAsync(employeeController.getEmployeeById));
 
 // POST /employees/
 router.post("/", authorize(["Administrator"]), handleAsync(employeeController.createEmployee));
